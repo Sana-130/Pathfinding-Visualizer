@@ -24,6 +24,9 @@ that best meets some criteria (shortest, cheapest, fastest, etc) between two poi
 </pre>
 * User can reset the whole board or they can just clear out the visualization part . 
 * More information on the features and 'How to use' are given in the tutorial window of the app.
+* If the program failed to find a path between start and end node:<br>
+(for eg: start or end node covered with barriers leaving no open cell to move.)<br>
+Then the user will get a popup window informing that it couldn't find a path.
 
 ## Demo
 * Tutorial window: <br>
