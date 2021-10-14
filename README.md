@@ -19,6 +19,8 @@ that best meets some criteria (shortest, cheapest, fastest, etc) between two poi
  BFS       : Press the 'b' key<br>
  Dijkstra  : Press the 'd' key<br>
  A* Search : Press the 'a' Key<br>
+ Reset     : Press the 'c' Key<br>
+ Reset the visualization part: Press the space bar
 </pre>
 * User can reset the whole board or they can just clear out the visualization part . 
 * More information on the features and 'How to use' are given in the tutorial window of the app.
@@ -40,6 +42,6 @@ that best meets some criteria (shortest, cheapest, fastest, etc) between two poi
 
 ![](images/dijkstra_img.png)
 
-* BFS visualisation:
+* BFS visualization:
 
 ![](images/bfs_img.png)
