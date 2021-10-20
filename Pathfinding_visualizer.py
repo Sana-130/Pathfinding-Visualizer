@@ -456,7 +456,6 @@ def main():
                     astar(lambda: draw(surface, grid, 51),grid, start, end)
     pygame.quit()
     
-main()
 
 
 if __name__=="__main__":
