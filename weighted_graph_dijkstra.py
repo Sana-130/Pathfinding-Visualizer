@@ -226,17 +226,8 @@ def main():
                 
                     
             if event.type==pygame.KEYDOWN:
-
-
-                if event.key==pygame.K_c:
-                    start=None
-                    end=None
-                    grid=grid_make(12)
-
-                if event.key==pygame.K_SPACE:
-                     leave(lambda: draw(surface, grid, 51),grid, start, end)
                     
-                if event.key==pygame.K_d and start:
+                if event.key==pygame.K_d and start and end:
                     dijkstra(lambda: draw(surface, grid, 51),grid, start, end)
                     
         
