@@ -192,10 +192,8 @@ def dijkstra(draw, grid, start, end):
     distance={col: sys.maxsize for row in grid for col in row}
     distance[start]=0
     visited_set=[]
-    distance2={}
-    distance2[start]=0
     from_list={}
-    vertex=[]
+    
 
     
     def get_min_distance(grid, distance, visited):
