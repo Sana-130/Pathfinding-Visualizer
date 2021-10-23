@@ -96,7 +96,7 @@ def grid_make(width):
         n=n+width
     return grid
 
-def draw(win, grid, row):
+def draw(win, grid):
     win.fill(BLACK)
     for row in grid:
         for spot in row:
@@ -218,7 +218,7 @@ def main():
     end=grid[5][5]
 
     while run:
-        draw(surface,grid, ROW+1)
+        draw(surface,grid)
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -228,7 +228,7 @@ def main():
             if event.type==pygame.KEYDOWN:
                     
                 if event.key==pygame.K_d and start and end:
-                    dijkstra(lambda: draw(surface, grid, 51),grid, start, end)
+                    dijkstra(lambda: draw(surface, grid),grid, start, end)
                     
         
     pygame.quit()
