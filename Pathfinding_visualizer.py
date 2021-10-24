@@ -6,8 +6,6 @@ from tkinter import messagebox
 from collections import deque
 from queue import PriorityQueue
 import time
-import sys
-
 
 
 ROW=50
@@ -90,7 +88,7 @@ def grid_make(width):
         n=n+width
     return grid
 
-def draw(win, grid, row):
+def draw(win, grid):
     win.fill(BLACK)
     for row in grid:
         for spot in row:
@@ -402,7 +400,7 @@ def main():
     grid=grid_make(12)
 
     while run:
-        draw(surface,grid, ROW+1)
+        draw(surface, grid)
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -437,7 +435,7 @@ def main():
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_b and start and end:
                 
-                    bfs(lambda: draw(surface, grid, 51), grid, start, end)
+                    bfs(lambda: draw(surface, grid ), grid, start, end)
 
                 if event.key==pygame.K_c:
                     start=None
@@ -445,13 +443,13 @@ def main():
                     grid=grid_make(12)
 
                 if event.key==pygame.K_SPACE:
-                     leave(lambda: draw(surface, grid, 51),grid, start, end)
+                     leave(lambda: draw(surface, grid ),grid, start, end)
                     
                 if event.key==pygame.K_d and start and node:
-                    dijkstra(lambda: draw(surface, grid, 51),grid, start, end)
+                    dijkstra(lambda: draw(surface, grid ),grid, start, end)
                     
                 if event.key==pygame.K_a and start and node:
-                    astar(lambda: draw(surface, grid, 51),grid, start, end)
+                    astar(lambda: draw(surface, grid ),grid, start, end)
     pygame.quit()
     
 
