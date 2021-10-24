@@ -3,8 +3,6 @@ import math
 
 import random
 import time
-import sys
-
 
 
 ROW=25
@@ -195,9 +193,8 @@ def dijkstra(draw, grid, start, end):
                     distance[grid[row][col]]=temp_dist
                     from_list[grid[row][col]]=current
                     grid[row][col].edge_color()
-                
-                #from_list[grid[row][col]]=current
-                grid[row][col].edge_color()
+               
+                #grid[row][col].edge_color()
             
             
                 time.sleep(0.001)
