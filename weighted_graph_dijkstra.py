@@ -236,7 +236,16 @@ def visua_reset( grid, start, end):
         for col in row:
             if col.color ==sky_blue or col.color==blue or col.color==light_orange:
                 col.reset()
-  
+                
+#reset everything              
+def all_clear(grid, start, end):
+    start.reset()
+    end.reset()
+    start=None
+    end=None
+    grass_reset(grid)
+    reset_barrier(grid)
+    visua_reset(grid, start, end) 
                 
 def main():
     run = True
@@ -298,7 +307,11 @@ def main():
 
                 #clearing out the visualisation part
                 if event.key==pygame.K_SPACE:
-                     visua_reset(grid, start, end)
+                    visua_reset(grid, start, end)
+                        
+                #clears everything        
+                if event.key==pygame.K_c and start and end:
+                    all_clear(grid, start, end)
                     
         
     pygame.quit()
