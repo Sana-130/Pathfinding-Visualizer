@@ -6,14 +6,27 @@ from tkinter import messagebox
 from collections import deque
 from queue import PriorityQueue
 import time
+import sys
 
-
-ROW=50
-COLUMN=50
 
 pygame.init()
-surface=pygame.display.set_mode((650, 650))
+
+''' code below adjust the width and height no matter what the quotient is after 
+cell_width divides the total_height and total_width to get rows and columns, 
+because we are rounding to the nearest possible value (from the division) that the
+cell_width could divide and get a remainder 0 so that the cells align perfectly.'''
+
+cell_width=25
+WIDTH=1300
+HEIGHT=650
+actual_height=(round(HEIGHT/cell_width))*cell_width
+actual_width=(round(WIDTH/cell_width))*cell_width
+surface=pygame.display.set_mode((actual_width, actual_height))
+
+COLUMN=round(WIDTH/cell_width)
+ROW=round(HEIGHT/cell_width)
 pygame.display.set_caption('Pathfinding Visualizer')
+
 done = False
 
 #colors
@@ -75,12 +88,12 @@ def grid_make(width):
     grid=[]
     y0=0
     n=width
-    for j in range(1 ,ROW+1):
+    for j in range(1 ,COLUMN+1):
         gap=width
         x0=0
         grid.append([])
-        for i in range(1, ROW+1):
-            spot=Spot(x0, y0,math.trunc(x0/13),math.trunc(y0/13), width)
+        for i in range(1, COLUMN+1):
+            spot=Spot(x0, y0,math.trunc(x0/cell_width),math.trunc(y0/cell_width), width)
             x0=gap+i
             gap=gap+width
             grid[j-1].append(spot)
@@ -96,17 +109,10 @@ def draw(win, grid):
             
     pygame.display.flip()
 
-'''this will get us the row and column position because
-total width is 650. and number of row and column is 50.
-650/50=13 .so you can always adjust the number of column and rows by changing
-some values like down here. Always keep in mind, if you want
-to change the width and height by some number, then multiply it with 13 and 
-give the final value as the window size, because 13 is the default size after 
-adding the spacing etc of the cell here.'''
 
 def get_position(x, y):
-    col=math.trunc(x/13)
-    row=math.trunc(y/13)
+    col=math.trunc(x/cell_width)
+    row=math.trunc(y/cell_width)
     return col, row
 
 def construct_path(curr_node, from_list, start):
@@ -185,7 +191,7 @@ def dijkstra(draw, grid, start, end):
 
                 
     def isValid(row, col):
-        return (row>=0) and (row<=49) and (col>=0) and (col<=49)
+        return (row>=0) and (row<=ROW-1) and (col>=0) and (col<=COLUMN-1)
     
     distance={col: sys.maxsize for row in grid for col in row}
     distance[start]=0
@@ -286,7 +292,7 @@ def astar(draw, grid, start, end):
     open_set_hash={start}
     
     def isValid(row, col):
-        return (row>=0) and (row<=49) and (col>=0) and (col<=49)
+        return (row>=0) and (row<=ROW-1) and (col>=0) and (col<=COLUMN-1)
     
     
     while not open_set.empty() :
@@ -342,7 +348,7 @@ def bfs(draw, grid, start, end):
     queue.append(start)
 
     def isValid(row, col):
-        return (row>=0) and (row<=49) and (col>=0) and (col<=49) 
+        return (row>=0) and (row<=ROW-1) and (col>=0) and (col<=COLUMN-1) 
 
     prev={}
     
@@ -397,7 +403,7 @@ def main():
     start=None
     end=None
     
-    grid=grid_make(12)
+    grid=grid_make(cell_width-1)
 
     while run:
         draw(surface, grid)
@@ -440,7 +446,7 @@ def main():
                 if event.key==pygame.K_c:
                     start=None
                     end=None
-                    grid=grid_make(12)
+                    grid=grid_make(cell_width-1)
 
                 if event.key==pygame.K_SPACE:
                      leave(lambda: draw(surface, grid ),grid, start, end)
