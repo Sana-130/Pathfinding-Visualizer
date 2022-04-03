@@ -4,6 +4,7 @@ import math
 import random
 import time
 import sys
+from queue import PriorityQueue
 
 from sqlalchemy import false, true
 
@@ -21,6 +22,7 @@ done = False
 is_car=False
 car_stop=False
 car=None
+
 BLACK = (0, 0, 0)
 WHITE=(255,255,255)
 
@@ -38,14 +40,17 @@ barrier=pygame.image.load('dijkstra_visualizer_updated\\barrier_img.png')
 end_img=pygame.image.load('dijkstra_visualizer_updated\end_img.png')
 #road=pygame.image.load('dijkstra_visualizer_updated\\road.png')
 car=pygame.image.load('dijkstra_visualizer_updated\\red-car.png')
+road_img=pygame.image.load('dijkstra_visualizer_updated\\road_img.jpg')
 
 #adjusting the size
 end_image=pygame.transform.scale(end_img, (WIDTH,WIDTH))
 start_image=pygame.transform.scale(start_img, (WIDTH,WIDTH))
 grass_image=pygame.transform.scale(grass_img, (WIDTH,WIDTH))
 barrier_img=pygame.transform.scale(barrier, (WIDTH,WIDTH))
+road=pygame.transform.scale(road_img, (WIDTH,WIDTH))
 #road_img=pygame.transform.scale(road, (WIDTH,WIDTH))
 red_car_img=pygame.transform.scale(car, (23, 23))
+
 #surface.blit(red_flag, (0,0))
 #other variables
 y0=0
@@ -76,7 +81,8 @@ class Spot:
         self.rect_obj=pygame.draw.rect(surface, self.color, (self.x, self.y, self.width, self.width))
         self.font=pygame.font.SysFont('Arial', 15)
         
-        
+    def path_draw(self):
+        surface.blit(road, (self.x, self.y))
 
     def draw_rect(self):
         pygame.draw.rect(surface, self.color, (self.x, self.y, self.width, self.width))
@@ -168,11 +174,10 @@ class Car:
         self.row=row
         self.is_move=0
         self.is_rotate=0
-        self.finished=False
         self.angle=270
         self.rotation_vel=3
         self.movement_array=[]
-        self.called=3
+        #self.called=3
         self.is_draw=None
         self.x_value=1.7
         
@@ -279,6 +284,8 @@ def draw(win, grid):
     global state
     global prev_move
 
+    
+
     win.fill(BLACK)
     for row in grid:
         for spot in row:
@@ -291,7 +298,7 @@ def draw(win, grid):
             elif spot.is_grass == True:
                 spot.green_box()
             elif spot.is_path == True:
-                pass
+                spot.path_draw()
             else:
                 spot.draw_rect()
                 spot.draw_text()
@@ -314,7 +321,7 @@ def draw(win, grid):
             car.rotate(limit)
        
 
-        if car.is_draw==False:
+        ''' if car.is_draw==False:
             for i in range(len(car.movement_array)):
                 if car.movement_array[i+1]==0:
                     if n>1:
@@ -324,11 +331,10 @@ def draw(win, grid):
                     #car.rotate_draw()
                     n+=1
                 if car.movement_array[i+1]!=0:
-                    print(i)
-                    car.is_draw=False
-                    break
+                    car.is_draw=False '''
+                   # break
 
-        pass              
+        #pass              
     pygame.display.flip()
 
 #def car_action(car):
@@ -383,37 +389,37 @@ def engine(state):
                 limit+=30 #up-left
                 pass
             elif car.movement_array[state]==-1 :#down-right
-                car.y+=5
+                #car.y+=5
                 accelarate=0
                 car.rotation_vel= 3
                 limit+=30
 
             elif car.movement_array[state]==-3 : #down-left
-                car.y+=5
+                #car.y+=5
                 accelarate=0
                 car.rotation_vel=-3
                 limit+=30
 
             elif car.movement_array[state]== 4:#right-up
-                car.x+=5
+                #car.x+=5
                 accelarate=0
                 car.rotation_vel=3
                 limit+=30
 
             elif car.movement_array[state]== 1 : #right-down
-                car.x+=5
+                #car.x+=5
                 accelarate=0
                 car.rotation_vel=-3
                 limit+=30
 
             elif car.movement_array[state]== 6:  #left-up
-                car.x-=5
+                #car.x-=5
                 accelarate=0
                 car.rotation_vel= -3
                 limit+=30
 
             elif car.movement_array[state]== 3 :#left-down
-                car.x-=5
+                #car.x-=5
                 accelarate=0
                 car.rotation_vel=3
                 limit+=30
@@ -505,13 +511,15 @@ def check_start(list_m):
             break
     return run      
 
+new_direct=[]
 def car_move(path_array, first):
     global is_car
     global car
     
     global direction
     #direction=[]
-    new_direct=[]
+    #new_direct=[]
+    global new_direct
 
     n=len(path_array)-1
     new_direct.append(detect_pos(first.col, first.row, path_array[-1].col , path_array[-1].row))
@@ -586,6 +594,7 @@ def car_move(path_array, first):
     #print("new direct", new_direct , "direction", direction,  "angle", car.angle, "length", len(direction), len(car.movement_array))
    
     is_car=True
+    print(len(new_direct), new_direct)
 
 path_array=[] 
 #updated contruct path function (colouring grass cell the path color)
@@ -691,6 +700,72 @@ def dijkstra(draw, grid, start, end):
     return False
 
 #barrier reset
+def mh(c1, c2):
+    start_x, start_y, dist=c1
+    end_x, end_y=c2
+    return abs(start_x - end_x)+ abs(start_y-end_y) + dist
+
+def astar(draw, grid, start, end):
+    count=0
+    rowNum=[-1, 1, 0, 0]
+    colNum=[0 ,0 ,-1 ,1]
+    
+    open_set=PriorityQueue()
+   
+    parent={}
+
+    g_score={col: sys.maxsize for row in grid for col in row}
+    f_score={col: sys.maxsize for row in grid for col in row}
+    g_score[start]=0
+    f_score[start]=mh((start.row, start.col, start.distance),(end.row, end.col))
+
+    open_set.put((0, count, start))
+    open_set_hash={start}
+    
+    def isValid(row, col):
+        return (row>=0) and (row<=ROW-1) and (col>=0) and (col<=COLUMN-1)
+    
+    
+    while not open_set.empty() :
+        q=open_set.get()[2]
+        open_set_hash.remove(q)
+        
+        if q==end:
+            end.make_end()
+            construct_path(q, parent, start)
+            return True
+            
+        
+        for i in range(4):
+            
+            row=q.row+ rowNum[i]
+            col=q.col+ colNum[i]
+
+            
+            if (isValid(row, col) and grid[row][col].is_barrier==false):
+                node=grid[row][col]
+                temp_g_score=g_score[q]+1
+                if temp_g_score<g_score[node]:
+                    g_score[node]=temp_g_score
+                    parent[node]=q
+                    f_score[node]=temp_g_score+ mh((node.row, node.col, node.distance),(end.row, end.col))
+
+                    if node not in open_set_hash:
+                        count+=1
+                        open_set.put((f_score[node], count, node))
+                        open_set_hash.add(node)
+                        node.edge_color()
+                        
+                    time.sleep(0.005)
+                    draw()
+
+            if q!=start:
+                q.visited_cell()
+                
+    
+    #message_box()
+    return False  
+    
 def reset_barrier(grid):
     for row in grid:
         for col in row:
@@ -807,6 +882,9 @@ def main():
                 if event.key==pygame.K_d and start and end:
                     print(start, end)
                     dijkstra(lambda: draw(surface, grid),grid, start, end)
+
+                if event.key==pygame.K_e and start and end:
+                    astar(lambda: draw(surface, grid),grid, start, end)
 
                 #clearing out the visualisation part
                 if event.key==pygame.K_SPACE:
